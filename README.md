@@ -5,9 +5,6 @@ Aplikasi mendukung tiga peran pengguna (guest/customer, tenant, admin) dengan al
 pembayaran (mock gateway + webhook bertanda tangan), persetujuan tenant, pengembalian, denda
 keterlambatan, ulasan, dan pengaturan platform.
 
-> **Catatan tampilan:** Sesuai kebutuhan proyek, seluruh halaman hanya menggunakan HTML semantik
-> **tanpa CSS, Tailwind, Bootstrap, atau framework UI lainnya**. Semua teks antarmuka dan pesan
-> validasi menggunakan Bahasa Indonesia.
 
 ---
 
