@@ -9,7 +9,9 @@
         {{-- Panel kiri: ilustrasi / gambar --}}
         <div class="col-lg-6 d-none d-lg-block">
             <div class="auth-visual">
-                <div class="auth-visual-inner"></div>
+                <div class="auth-visual-inner">
+                    <img src="{{ asset('images/auth-visual.png') }}" alt="Ilustrasi login" class="img-fluid">
+                </div>
             </div>
         </div>
 
