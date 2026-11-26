@@ -121,7 +121,7 @@
                     <li><a class="footer-link" href="#">Bantuan</a></li>
                     <li><a class="footer-link" href="{{ route('pages.terms') }}">Syarat sewa</a></li>
                     {{-- TODO: ganti dengan URL Instagram resmi. --}}
-                    <li><a class="footer-link" href="#">Instagram</a></li>
+                    <li><a class="footer-link" href="https://www.instagram.com/mhmdbaguus_/">Instagram</a></li>
                 </ul>
             </div>
         </div>

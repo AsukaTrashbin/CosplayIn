@@ -102,6 +102,7 @@ body {
     background-color: var(--ci-surface);
     border-bottom: 1px solid var(--ci-border);
     padding-block: 1.5rem;
+    position:static
 }
 
 .navbar-ci .navbar-nav .nav-link {
@@ -683,4 +684,117 @@ body {
 
 .catalog-page-arrow:hover {
     text-decoration: underline;
+}
+
+/* =========================================================
+   Auth page (login / register)
+   ========================================================= */
+.auth-visual {
+    background-color: var(--ci-pink-soft);
+    border-radius: 1.5rem;
+    padding: 3rem;
+}
+
+.auth-visual-inner {
+    background-color: var(--ci-placeholder);
+    border-radius: 1rem;
+    aspect-ratio: 4 / 5;
+    width: 100%;
+}
+
+@media (max-width: 991.98px) {
+    .auth-visual {
+        padding: 1.5rem;
+    }
+}
+
+.auth-form {
+    max-width: 500px;
+    margin-inline: auto;
+}
+
+/* Segmented switch Login / Buat akun */
+.auth-switch {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background-color: var(--ci-surface);
+    border: 1px solid var(--ci-border);
+    border-radius: 999px;
+    padding: 0.25rem;
+}
+
+.auth-switch a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.7rem 1rem;
+    border-radius: 999px;
+    color: var(--ci-text);
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+}
+
+.auth-switch a:hover {
+    background-color: var(--ci-pink-soft);
+}
+
+.auth-switch a.active {
+    background-color: var(--ci-accent);
+    font-weight: 600;
+}
+
+.auth-title {
+    font-size: clamp(2rem, 3.2vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+}
+
+.auth-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+}
+
+.auth-input {
+    background-color: var(--ci-surface);
+    border: 1px solid var(--ci-border);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+}
+
+.auth-input::placeholder {
+    color: var(--ci-muted);
+    opacity: 1;
+}
+
+.auth-submit {
+    border-radius: 0.75rem;
+    padding: 0.8rem;
+    font-size: 1.05rem;
+}
+
+.auth-link {
+    color: var(--ci-text);
+    font-size: 0.95rem;
+    text-decoration: none;
+}
+
+.auth-link:hover {
+    text-decoration: underline;
+}
+
+/* Bagian tenant pada register */
+.auth-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.auth-note {
+    color: var(--ci-muted);
+    font-size: 0.875rem;
 }
