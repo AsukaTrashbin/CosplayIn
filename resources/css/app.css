@@ -1,8 +1,370 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import 'bootstrap/dist/css/bootstrap.min.css';
 
-@source "../**/*.blade.php";
-@source "../**/*.js";
-@source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
-@source "../../storage/framework/views/*.php";
+/* =========================================================
+   CosplayIn theme
+   Satu stylesheet kustom: variabel warna + sedikit penyesuaian
+   di atas Bootstrap 5. Semua layout memakai utility Bootstrap.
+   ========================================================= */
+:root {
+    --ci-bg: #FAF9F6;
+    --ci-surface: #FFFFFF;
+    --ci-text: #4A2C2F;
+    --ci-muted: #7A6568;
+    --ci-accent: #FFDADA;
+    --ci-accent-strong: #FFC9C9;
+    --ci-pink-soft: #FBE9E8;
+    --ci-border: #ECE7E4;
+    --ci-divider: #F3CFCF;
+    --ci-placeholder: #D0D0D0;
+    --ci-success-bg: #E7F6E9;
+    --ci-success-text: #2F7A3E;
 
-@plugin "daisyui";
+    /* Override variabel Bootstrap agar warna primary mengikuti tema. */
+    --bs-primary: #FFDADA;
+    --bs-primary-rgb: 255, 218, 218;
+    --bs-body-bg: var(--ci-bg);
+    --bs-body-color: var(--ci-text);
+    --bs-body-font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --bs-link-color: var(--ci-text);
+    --bs-link-color-rgb: 74, 44, 47;
+    --bs-link-hover-color: #2F1B1D;
+    --bs-border-color: var(--ci-border);
+    --bs-emphasis-color: var(--ci-text);
+}
+
+body {
+    background-color: var(--ci-bg);
+    color: var(--ci-text);
+    font-family: var(--bs-body-font-family);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Lebar konten mengikuti referensi desain (lebih lebar dari container default). */
+.ci-container {
+    width: 100%;
+    max-width: 1580px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+}
+
+.text-muted-ci {
+    color: var(--ci-muted);
+}
+
+.ci-brand {
+    color: var(--ci-text);
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    text-decoration: none;
+}
+
+.ci-brand:hover {
+    color: var(--ci-text);
+}
+
+/* Tombol pink sebagai turunan .btn-primary Bootstrap. */
+.btn-primary {
+    --bs-btn-color: var(--ci-text);
+    --bs-btn-bg: var(--ci-accent);
+    --bs-btn-border-color: var(--ci-accent);
+    --bs-btn-hover-color: var(--ci-text);
+    --bs-btn-hover-bg: var(--ci-accent-strong);
+    --bs-btn-hover-border-color: var(--ci-accent-strong);
+    --bs-btn-active-color: var(--ci-text);
+    --bs-btn-active-bg: var(--ci-accent-strong);
+    --bs-btn-active-border-color: var(--ci-accent-strong);
+    --bs-btn-disabled-color: var(--ci-text);
+    --bs-btn-disabled-bg: var(--ci-accent);
+    --bs-btn-disabled-border-color: var(--ci-accent);
+    --bs-btn-focus-shadow-rgb: 255, 201, 201;
+    font-weight: 600;
+}
+
+.btn-pink {
+    --bs-btn-color: var(--ci-text);
+    --bs-btn-bg: var(--ci-accent);
+    --bs-btn-border-color: var(--ci-accent);
+    --bs-btn-hover-color: var(--ci-text);
+    --bs-btn-hover-bg: var(--ci-accent-strong);
+    --bs-btn-hover-border-color: var(--ci-accent-strong);
+    --bs-btn-active-color: var(--ci-text);
+    --bs-btn-active-bg: var(--ci-accent-strong);
+    --bs-btn-active-border-color: var(--ci-accent-strong);
+    --bs-btn-focus-shadow-rgb: 255, 201, 201;
+    font-weight: 600;
+}
+
+/* Navbar */
+.navbar-ci {
+    background-color: var(--ci-surface);
+    border-bottom: 1px solid var(--ci-border);
+    padding-block: 1.5rem;
+}
+
+.navbar-ci .navbar-nav .nav-link {
+    color: var(--ci-text);
+    font-size: 1.05rem;
+    font-weight: 500;
+    padding: 0.7rem 1.6rem;
+    border-radius: 999px;
+}
+
+.navbar-ci .navbar-nav .nav-link:hover {
+    color: var(--ci-text);
+    background-color: var(--ci-pink-soft);
+}
+
+.navbar-ci .navbar-nav .nav-link.active,
+.navbar-ci .navbar-nav .nav-pill-active {
+    background-color: var(--ci-accent);
+    color: var(--ci-text);
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.6);
+}
+
+/* Hero */
+.hero {
+    background-color: var(--ci-pink-soft);
+    border-radius: 1.5rem;
+    overflow: hidden;
+}
+
+@media (min-width: 992px) {
+    .hero {
+        min-height: 27rem;
+    }
+}
+
+.hero-copy {
+    padding: 2.5rem 1.5rem;
+}
+
+@media (min-width: 992px) {
+    .hero-copy {
+        flex: 0 0 62%;
+        max-width: 62%;
+        padding: 2.75rem 3rem;
+    }
+}
+
+.hero-eyebrow {
+    color: var(--ci-muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.hero-title {
+    font-size: clamp(2.25rem, 4vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+}
+
+.hero-text {
+    color: var(--ci-muted);
+    font-size: 1.05rem;
+    line-height: 1.65;
+    max-width: 30rem;
+}
+
+.hero-media {
+    background-color: var(--ci-placeholder);
+    min-height: 24rem;
+}
+
+/* Search card */
+.search-card {
+    background-color: var(--ci-surface);
+    border: 1px solid var(--ci-border);
+    border-radius: 1rem;
+    padding: 1.25rem;
+}
+
+@media (min-width: 992px) {
+    .search-card {
+        padding: 1.75rem;
+    }
+}
+
+.search-label {
+    color: var(--ci-muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.search-field .form-control,
+.search-field .form-select {
+    background-color: transparent;
+    background-image: none;
+    border: 0;
+    border-radius: 0;
+    color: var(--ci-text);
+    font-size: 1.15rem;
+    padding-inline: 0;
+    padding-block: 0.15rem;
+}
+
+.search-field .form-control::placeholder {
+    color: var(--ci-text);
+    opacity: 1;
+}
+
+.search-field .form-control:focus,
+.search-field .form-select:focus {
+    box-shadow: none;
+}
+
+.search-card .btn {
+    font-size: 1.05rem;
+    padding-block: 0.75rem;
+}
+
+@media (min-width: 992px) {
+    .search-field + .search-field {
+        border-left: 1px solid var(--ci-divider);
+    }
+}
+
+/* Section headings */
+.section-title {
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.link-arrow {
+    color: var(--ci-text);
+    font-size: 0.95rem;
+    text-decoration: none;
+}
+
+.link-arrow:hover {
+    color: var(--ci-text);
+    text-decoration: underline;
+}
+
+/* Category pills */
+.category-pill {
+    background-color: var(--ci-surface);
+    border: 1px solid var(--ci-border);
+    border-radius: 999px;
+    color: var(--ci-text);
+    font-size: 1rem;
+    font-weight: 500;
+    min-width: 11.5rem;
+    padding: 0.7rem 1.5rem;
+}
+
+.category-pill:hover {
+    background-color: var(--ci-pink-soft);
+    border-color: var(--ci-accent);
+    color: var(--ci-text);
+}
+
+.category-pill.active {
+    background-color: var(--ci-accent);
+    border-color: var(--ci-accent);
+}
+
+/* Costume cards */
+.costume-card {
+    background-color: var(--ci-surface);
+    border: 1px solid var(--ci-border);
+    border-radius: 1rem;
+    padding: 0.55rem;
+    height: 100%;
+}
+
+.costume-media {
+    background-color: var(--ci-placeholder);
+    border-radius: 0.65rem;
+    aspect-ratio: 10 / 9;
+}
+
+.badge-available {
+    background-color: var(--ci-success-bg);
+    border-radius: 0.5rem;
+    color: var(--ci-success-text);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.5rem 0.85rem;
+}
+
+.costume-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.costume-price {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.costume-price .per-day {
+    color: var(--ci-muted);
+    font-size: 0.95rem;
+    font-weight: 400;
+}
+
+/* How to rent */
+.how-box {
+    background-color: var(--ci-pink-soft);
+    border-radius: 1.25rem;
+}
+
+.step-number {
+    color: var(--ci-muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.step-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.step-text {
+    color: var(--ci-muted);
+}
+
+/* Footer */
+.footer-divider {
+    border-top: 1px solid var(--ci-divider);
+}
+
+.footer-link {
+    color: var(--ci-muted);
+    text-decoration: none;
+}
+
+.footer-link:hover {
+    color: var(--ci-text);
+}
+
+/* Form & pagination tuning */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--ci-accent-strong);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.45);
+}
+
+.page-link {
+    color: var(--ci-text);
+}
+
+.active > .page-link,
+.page-link.active {
+    background-color: var(--ci-accent);
+    border-color: var(--ci-accent);
+    color: var(--ci-text);
+}

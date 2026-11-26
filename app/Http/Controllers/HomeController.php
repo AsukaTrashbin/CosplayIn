@@ -2,14 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AvailabilityCheckRequest;
 use App\Http\Requests\CatalogFilterRequest;
-use App\Models\Category;
 use App\Models\Costume;
-use App\Models\Review;
-use App\Services\AvailabilityService;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -17,27 +12,18 @@ class HomeController extends Controller
     {
         $filters = $request->validated();
 
-        $query = Costume::query()
-            ->visibleToPublic()
-            ->with(['tenant', 'category', 'sizes', 'images'])
-            ->filter($filters);
-
-        $costumes = (clone $query)->latest()->paginate(8)->withQueryString();
-
-        $popular = Costume::query()
-            ->visibleToPublic()
-            ->with(['tenant', 'sizes', 'images'])
-            ->withCount('bookings')
-            ->orderByDesc('bookings_count')
-            ->orderByDesc('is_popular')
-            ->take(6)
-            ->get();
-
-        $categories = Category::query()
-            ->whereNull('tenant_id')
-            ->withCount(['costumes' => fn ($q) => $q->visibleToPublic()])
-            ->orderBy('name')
-            ->get();
+        /**
+         * Data contoh untuk kartu "Cosplay populer".
+         * Ganti dengan query database saat data kostum sudah siap.
+         *
+         * @var array<int, array{name: string, price: int, available: bool}>
+         */
+        $popularCosplays = [
+            ['name' => 'Nama Karakter', 'price' => 150000, 'available' => true],
+            ['name' => 'Nama Karakter', 'price' => 120000, 'available' => true],
+            ['name' => 'Nama Karakter', 'price' => 135000, 'available' => true],
+            ['name' => 'Nama Karakter', 'price' => 100000, 'available' => true],
+        ];
 
         $cities = Costume::query()
             ->visibleToPublic()
@@ -46,6 +32,6 @@ class HomeController extends Controller
             ->orderBy('city')
             ->pluck('city');
 
-        return view('home', compact('filters', 'costumes', 'popular', 'categories', 'cities'));
+        return view('home', compact('filters', 'popularCosplays', 'cities'));
     }
 }

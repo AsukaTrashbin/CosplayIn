@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Services\Payment\MockPaymentGateway;
 use App\Services\Payment\PaymentGateway;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,8 +28,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Pagination tanpa kelas CSS (styling ditunda).
-        \Illuminate\Pagination\Paginator::defaultView('pagination.default');
-        \Illuminate\Pagination\Paginator::defaultSimpleView('pagination.default');
+        Paginator::useBootstrapFive();
     }
 }
