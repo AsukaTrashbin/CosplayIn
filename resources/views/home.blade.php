@@ -16,13 +16,13 @@
                     Tanpa harus beli.
                 </h1>
 
-                <p class="hero-text mb-4">
+                <p class="hero-text mb-5">
                     Dari anime hingga game, temukan kostum impianmu dari tenant pilihan.
                     Sewa mudah, siap tampil di event berikutnya.
                 </p>
 
                 <div>
-                    <a href="{{ route('catalog.index') }}" class="btn btn-primary rounded-pill px-5 py-3">
+                    <a href="{{ route('catalog.index') }}" class="btn btn-primary rounded-pill px-4 py-3">
                         Mulai menyewa &rarr;
                     </a>
                 </div>
@@ -94,7 +94,7 @@
     {{-- COSPLAY POPULER --}}
     <section class="mt-5">
         <div class="d-flex justify-content-between align-items-start mb-4">
-            <h2 class="section-title mb-0">Cosplay popoler</h2>
+            <h2 class="section-title mb-0">Cosplay populer</h2>
             <a href="{{ route('catalog.index') }}" class="link-arrow text-end lh-sm">
                 Lihat semua<br>&rarr;
             </a>

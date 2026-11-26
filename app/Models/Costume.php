@@ -23,6 +23,35 @@ class Costume extends Model
         'unisex' => 'Unisex',
     ];
 
+    public const JABODETABEK_CITIES = [
+        'Jakarta',
+        'Jakarta Pusat',
+        'Jakarta Utara',
+        'Jakarta Barat',
+        'Jakarta Selatan',
+        'Jakarta Timur',
+        'Bogor',
+        'Depok',
+        'Tangerang',
+        'Tangerang Selatan',
+        'Bekasi',
+    ];
+
+    public const CATALOG_CATEGORIES = [
+        'anime' => 'Anime',
+        'game' => 'Game',
+        'film-serial' => 'Film & serial',
+        'original' => 'Original',
+    ];
+
+    public const SORT_OPTIONS = [
+        'paling_sesuai' => 'Paling sesuai',
+        'ulasan' => 'Ulasan',
+        'terbaru' => 'Terbaru',
+        'harga_tertinggi' => 'Harga tertinggi',
+        'harga_terendah' => 'Harga terendah',
+    ];
+
     protected $fillable = [
         'tenant_id',
         'category_id',
@@ -104,16 +133,72 @@ class Costume extends Model
                         ->orWhere('accessories', 'like', '%'.$keyword.'%');
                 });
             })
-            ->when($filters['kota'] ?? null, fn (Builder $q, string $city) => $q->where('city', $city))
+            ->when($filters['kota'] ?? null, function (Builder $q, string $city) {
+                $city = trim($city);
+                if (strcasecmp($city, 'Jakarta') === 0) {
+                    $q->where(function (Builder $inner) {
+                        $inner->where('city', 'Jakarta')
+                            ->orWhere('city', 'like', 'Jakarta %');
+                    });
+
+                    return;
+                }
+
+                $q->where('city', $city);
+            })
             ->when($filters['gender'] ?? null, function (Builder $q, string $gender) {
                 $q->where(function (Builder $inner) use ($gender) {
                     $inner->where('gender', $gender)->orWhere('gender', 'unisex');
                 });
             })
-            ->when($filters['kategori'] ?? null, fn (Builder $q, $category) => $q->where('category_id', $category))
+            ->when(! empty($filters['kategori']), function (Builder $q) use ($filters) {
+                $categories = (array) $filters['kategori'];
+                $q->whereHas('category', function (Builder $catQuery) use ($categories) {
+                    $catQuery->where(function (Builder $inner) use ($categories) {
+                        foreach ($categories as $category) {
+                            if (is_numeric($category)) {
+                                $inner->orWhere('id', (int) $category);
+                                continue;
+                            }
+
+                            $patterns = match (strtolower((string) $category)) {
+                                'anime' => ['%anime%'],
+                                'game' => ['%game%'],
+                                'film-serial' => ['%film%', '%serial%'],
+                                'original' => ['%original%', '%tokoh umum%'],
+                                default => ['%'.strtolower((string) $category).'%'],
+                            };
+
+                            foreach ($patterns as $pattern) {
+                                $inner->orWhereRaw('LOWER(name) like ?', [$pattern]);
+                            }
+                        }
+                    });
+                });
+            })
             ->when($filters['ukuran'] ?? null, function (Builder $q, string $size) {
                 $q->whereHas('sizes', fn (Builder $inner) => $inner->where('size', $size)->where('stock', '>', 0));
+            })
+            ->when(isset($filters['harga_min']) && $filters['harga_min'] !== null, function (Builder $q) use ($filters) {
+                $q->where('price_per_day', '>=', (int) $filters['harga_min']);
+            })
+            ->when(isset($filters['harga_max']) && $filters['harga_max'] !== null, function (Builder $q) use ($filters) {
+                $q->where('price_per_day', '<=', (int) $filters['harga_max']);
+            })
+            ->when(! empty($filters['tersedia']), function (Builder $q) {
+                $q->whereHas('sizes', fn (Builder $inner) => $inner->where('stock', '>', 0));
             });
+    }
+
+    public function scopeSortCatalog(Builder $query, ?string $sort): Builder
+    {
+        return match ($sort) {
+            'ulasan' => $query->orderByDesc('reviews_avg_rating')->orderByDesc('reviews_count')->latest(),
+            'terbaru' => $query->latest(),
+            'harga_tertinggi' => $query->orderByDesc('price_per_day')->latest(),
+            'harga_terendah' => $query->orderBy('price_per_day')->latest(),
+            default => $query->orderByDesc('is_popular')->latest(),
+        };
     }
 
     public function primaryImageUrl(): string

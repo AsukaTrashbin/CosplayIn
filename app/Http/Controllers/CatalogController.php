@@ -20,14 +20,16 @@ class CatalogController extends Controller
         $costumes = Costume::query()
             ->visibleToPublic()
             ->with(['tenant', 'category', 'sizes', 'images'])
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
             ->filter($filters)
-            ->latest()
-            ->paginate(12)
+            ->sortCatalog($filters['urutkan'] ?? 'paling_sesuai')
+            ->paginate(8)
             ->withQueryString();
 
         $trending = Costume::query()
             ->visibleToPublic()
-            ->with(['tenant', 'images'])
+            ->with(['tenant', 'category', 'images'])
             ->withCount('bookings')
             ->orderByDesc('bookings_count')
             ->take(5)
@@ -38,14 +40,57 @@ class CatalogController extends Controller
             ->orderBy('name')
             ->get();
 
-        $cities = Costume::query()
-            ->visibleToPublic()
-            ->select('city')
-            ->distinct()
-            ->orderBy('city')
-            ->pluck('city');
+        $cities = collect(Costume::JABODETABEK_CITIES);
+        $catalogCategories = Costume::CATALOG_CATEGORIES;
+        $sortOptions = Costume::SORT_OPTIONS;
 
-        return view('katalog.index', compact('filters', 'costumes', 'trending', 'categories', 'cities'));
+        $selectedCategories = $this->resolveSelectedCategorySlugs($filters['kategori'] ?? [], $categories);
+
+        return view('katalog.index', compact(
+            'filters',
+            'costumes',
+            'trending',
+            'categories',
+            'cities',
+            'catalogCategories',
+            'sortOptions',
+            'selectedCategories'
+        ));
+    }
+
+    /**
+     * Normalisasi parameter kategori (slug maupun ID numerik) ke slug checkbox katalog.
+     *
+     * @param  array<int, string>  $rawCategories
+     * @param  \Illuminate\Support\Collection<int, Category>  $categories
+     * @return array<int, string>
+     */
+    private function resolveSelectedCategorySlugs(array $rawCategories, \Illuminate\Support\Collection $categories): array
+    {
+        $byId = $categories->keyBy('id');
+        $slugs = [];
+
+        foreach ($rawCategories as $item) {
+            if (array_key_exists($item, Costume::CATALOG_CATEGORIES)) {
+                $slugs[] = $item;
+                continue;
+            }
+
+            if (is_numeric($item) && $byId->has((int) $item)) {
+                $name = strtolower($byId->get((int) $item)->name);
+                if (str_contains($name, 'anime')) {
+                    $slugs[] = 'anime';
+                } elseif (str_contains($name, 'game')) {
+                    $slugs[] = 'game';
+                } elseif (str_contains($name, 'film') || str_contains($name, 'serial')) {
+                    $slugs[] = 'film-serial';
+                } elseif (str_contains($name, 'original') || str_contains($name, 'tokoh umum')) {
+                    $slugs[] = 'original';
+                }
+            }
+        }
+
+        return array_values(array_unique($slugs));
     }
 
     public function show(Costume $costume, Request $request): View
