@@ -33,7 +33,7 @@
     </section>
 
     {{-- PENCARIAN --}}
-    <section class="search-card p-3 p-lg-4 mt-5">
+    <section class="search-card mt-5">
         <form method="GET" action="{{ route('catalog.index') }}" class="row g-0 align-items-center">
             <div class="col-12 col-lg-4 pe-lg-4 mb-3 mb-lg-0 search-field">
                 <label for="q" class="search-label d-block mb-2">Karakter atau seri</label>
