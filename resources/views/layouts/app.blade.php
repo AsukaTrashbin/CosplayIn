@@ -9,7 +9,7 @@
     @stack('head')
     @stack('styles')
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 @yield('body-class')">
 
 <header>
     <nav class="navbar navbar-expand-lg navbar-ci" aria-label="Menu utama">
@@ -28,6 +28,12 @@
                         <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"
                            href="{{ route('home') }}">Home</a>
                     </li>
+                    @auth
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('dashboard') || request()->routeIs('customer.*') ? 'active' : '' }}"
+                               href="{{ route(auth()->user()->dashboardRoute()) }}">Profile</a>
+                        </li>
+                    @endauth
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('catalog.*') ? 'active' : '' }}"
                            href="{{ route('catalog.index') }}">Katalog</a>
@@ -46,9 +52,6 @@
                                     <span class="badge rounded-pill text-bg-light">{{ auth()->user()->unreadNotifications->count() }}</span>
                                 @endif
                             </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route(auth()->user()->dashboardRoute()) }}">Dashboard</a>
                         </li>
                         <li class="nav-item">
                             <form method="POST" action="{{ route('logout') }}">

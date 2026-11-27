@@ -139,6 +139,55 @@ class Booking extends Model
         };
     }
 
+    public function paymentStatusLabel(): string
+    {
+        return match ($this->status) {
+            self::STATUS_WAITING_PAYMENT => 'Menunggu bayar',
+            self::STATUS_PAID,
+            self::STATUS_READY_TO_PROCESS,
+            self::STATUS_RENTED,
+            self::STATUS_RETURNED => 'Dibayar',
+            self::STATUS_FAILED => 'Pembayaran gagal',
+            self::STATUS_COMPLETED => 'Selesai',
+            self::STATUS_REJECTED => 'Ditolak',
+            default => 'Menunggu konfirmasi',
+        };
+    }
+
+    public function isPaymentDue(): bool
+    {
+        return in_array($this->status, [
+            self::STATUS_WAITING_PAYMENT,
+            self::STATUS_FAILED,
+        ], true);
+    }
+
+    public function rentalPeriodLong(): string
+    {
+        return $this->formatRentalPeriod('d F Y', 'd F Y');
+    }
+
+    public function rentalPeriodShort(): string
+    {
+        return $this->formatRentalPeriod('d M Y', 'd M Y');
+    }
+
+    private function formatRentalPeriod(string $startFormat, string $endFormat): string
+    {
+        if (! $this->rental_date || ! $this->return_date) {
+            return '-';
+        }
+
+        $start = $this->rental_date->copy()->locale('id');
+        $end = $this->return_date->copy()->locale('id');
+
+        if ($start->isSameMonth($end)) {
+            return $start->format('d').'-'.$end->translatedFormat($endFormat);
+        }
+
+        return $start->translatedFormat($startFormat).' - '.$end->translatedFormat($endFormat);
+    }
+
     public function isActive(): bool
     {
         return in_array($this->status, [

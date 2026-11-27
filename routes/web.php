@@ -22,6 +22,7 @@ use App\Http\Controllers\KtpController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PublicTenantController;
+use App\Http\Controllers\Tenant\AvailabilityController;
 use App\Http\Controllers\Tenant\BookingController as TenantBookingController;
 use App\Http\Controllers\Tenant\CategoryController as TenantCategoryController;
 use App\Http\Controllers\Tenant\CostumeController as TenantCostumeController;
@@ -105,6 +106,15 @@ Route::middleware(['auth', 'verified', 'role:customer'])->group(function () {
 
     Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
 
+    Route::get('/pesanan-aktif', [CustomerDashboardController::class, 'activeOrders'])
+        ->name('customer.orders.active');
+
+    Route::get('/status-pembayaran', [CustomerDashboardController::class, 'payments'])
+        ->name('customer.payments.index');
+
+    Route::get('/riwayat-sewa', [CustomerDashboardController::class, 'rentalHistory'])
+        ->name('customer.rentals.history');
+
     Route::get('/pesanan/{booking}', [CustomerOrderController::class, 'show'])->name('orders.show');
 
     Route::get('/pengembalian/{booking}', [CustomerReturnController::class, 'create'])->name('returns.create');
@@ -127,11 +137,11 @@ Route::prefix('tenant')->middleware(['auth', 'verified', 'role:tenant', 'tenant.
         ->names('tenant.costumes')
         ->except(['show']);
 
-    Route::get('/kostum/{costume}/jadwal', [\App\Http\Controllers\Tenant\AvailabilityController::class, 'index'])
+    Route::get('/kostum/{costume}/jadwal', [AvailabilityController::class, 'index'])
         ->name('tenant.costumes.schedule');
-    Route::post('/kostum/{costume}/jadwal', [\App\Http\Controllers\Tenant\AvailabilityController::class, 'store'])
+    Route::post('/kostum/{costume}/jadwal', [AvailabilityController::class, 'store'])
         ->name('tenant.costumes.schedule.store');
-    Route::delete('/kostum/{costume}/jadwal/{block}', [\App\Http\Controllers\Tenant\AvailabilityController::class, 'destroy'])
+    Route::delete('/kostum/{costume}/jadwal/{block}', [AvailabilityController::class, 'destroy'])
         ->name('tenant.costumes.schedule.destroy');
 
     Route::resource('kategori', TenantCategoryController::class)
