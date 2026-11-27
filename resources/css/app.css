@@ -1733,3 +1733,72 @@ body {
     border-radius: 1rem;
     padding: 1.25rem 1.5rem;
 }
+
+/* =========================================================
+   Booking / create page
+   ========================================================= */
+.booking-steps {
+    color: var(--ci-muted);
+    font-size: 0.95rem;
+}
+
+.booking-steps .step-active {
+    color: var(--ci-text);
+    font-weight: 600;
+}
+
+.booking-steps .step-line {
+    display: inline-block;
+    width: 70px;
+    height: 1px;
+    background-color: var(--ci-divider);
+    vertical-align: middle;
+    margin: 0 0.75rem;
+}
+
+.booking-summary-media {
+    width: 88px;
+    height: 112px;
+    flex-shrink: 0;
+    background-color: var(--ci-placeholder);
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.booking-summary-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.booking-summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    font-size: 0.98rem;
+}
+
+.booking-summary-row .label {
+    color: var(--ci-muted);
+}
+
+.booking-summary-row .value {
+    font-weight: 500;
+}
+
+.booking-total {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.booking-hint {
+    color: var(--ci-muted);
+    font-size: 0.8rem;
+}
+
+.booking-availability {
+    color: var(--ci-success-text);
+    font-size: 0.92rem;
+}
