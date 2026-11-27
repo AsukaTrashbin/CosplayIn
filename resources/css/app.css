@@ -1802,3 +1802,64 @@ body {
     color: var(--ci-success-text);
     font-size: 0.92rem;
 }
+
+/* =========================================================
+   Payment page
+   ========================================================= */
+.pay-summary-box {
+    background-color: var(--ci-pink-soft);
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+}
+
+.pay-method {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    background-color: var(--ci-surface);
+    border: 1px solid var(--ci-border);
+    border-radius: 1rem;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.pay-method:hover {
+    border-color: var(--ci-accent-strong);
+}
+
+.pay-method.is-selected {
+    background-color: var(--ci-pink-soft);
+    border-color: var(--ci-pink-soft);
+}
+
+.pay-method input[type="radio"] {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin: 0;
+    accent-color: var(--ci-text);
+    flex-shrink: 0;
+}
+
+.pay-method-title {
+    font-weight: 600;
+    font-size: 1.02rem;
+}
+
+.pay-method-desc {
+    color: var(--ci-muted);
+    font-size: 0.85rem;
+}
+
+.pay-method-chevron {
+    margin-left: auto;
+    color: var(--ci-muted);
+    font-size: 0.8rem;
+}
+
+.pay-total {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
