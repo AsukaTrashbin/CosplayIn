@@ -3,138 +3,147 @@
 @section('title', $costume->character_name)
 
 @section('content')
-<article>
-    <p><a href="{{ route('catalog.index') }}">&laquo; Kembali ke katalog</a></p>
+<div class="ci-container py-4 pb-5">
 
-    <h1>{{ $costume->character_name }}</h1>
-    <p>Tenant: <a href="{{ route('tenants.show', $costume->tenant) }}">{{ $costume->tenant->store_name }}</a> ({{ $costume->tenant->city }})</p>
-    <p>Kategori: {{ $costume->category?->name ?? 'Tanpa kategori' }} | Gender: {{ $costume->genderLabel() }} | Kota: {{ $costume->city }}</p>
-    <p>Rating rata-rata: {{ $averageRating > 0 ? $averageRating.' / 5' : 'Belum ada rating' }}</p>
+    {{-- Breadcrumb --}}
+    <nav class="detail-breadcrumb mb-4" aria-label="breadcrumb">
+        <a href="{{ route('home') }}">Home</a> /
+        <a href="{{ route('catalog.index') }}">Katalog</a> /
+        <span>{{ $costume->character_name }}</span>
+    </nav>
 
-    <figure>
-        <img src="{{ $costume->primaryImageUrl() }}" alt="Foto utama kostum {{ $costume->character_name }}" width="600" height="400">
-        <figcaption>Foto utama</figcaption>
-    </figure>
+    <div class="row g-5">
 
-    @if ($costume->images->count() > 1)
-        <section>
-            <h2>Galeri Foto</h2>
-            <ul>
-                @foreach ($costume->images as $image)
-                    <li>
-                        <img src="{{ $image->url() }}" alt="Foto tambahan kostum {{ $costume->character_name }}" width="200" height="150">
-                    </li>
-                @endforeach
-            </ul>
-        </section>
-    @endif
+        {{-- Galeri --}}
+        <div class="col-lg-6">
+            <div class="detail-main-media mb-3">
+                <img src="{{ $costume->primaryImageUrl() }}" alt="Foto utama kostum {{ $costume->character_name }}">
+            </div>
 
-    <section>
-        <h2>Deskripsi</h2>
-        <p>{!! nl2br(e($costume->description)) !!}</p>
-
-        <h3>Aksesori dan Kelengkapan</h3>
-        <p>{{ $costume->accessories ?: 'Informasi aksesori belum diisi tenant.' }}</p>
-
-        <h3>Aturan Sewa</h3>
-        <ul>
-            <li>Durasi sewa minimal {{ config('cosplayin.rental.min_days') }} hari dan maksimal {{ config('cosplayin.rental.max_days') }} hari (dapat berubah sesuai pengaturan admin).</li>
-            <li>Penyewa wajib mengunggah foto KTP asli untuk verifikasi identitas.</li>
-            <li>Kostum harus dikembalikan sesuai tanggal yang disepakati.</li>
-            <li>Keterlambatan dikenakan denda per hari sesuai pengaturan platform.</li>
-            <li>Kerusakan atau kehilangan diklaim dari deposit.</li>
-            <li>{{ config('cosplayin.cancellation.policy_text') }}</li>
-        </ul>
-    </section>
-
-    <section>
-        <h2>Harga dan Ukuran</h2>
-        <p>Harga sewa: <strong>{{ rupiah($costume->price_per_day) }} / hari</strong></p>
-        <p>Deposit: {{ rupiah($costume->deposit > 0 ? $costume->deposit : config('cosplayin.deposit')) }}</p>
-
-        <table>
-            <caption>Stok per ukuran</caption>
-            <thead>
-                <tr>
-                    <th scope="col">Ukuran</th>
-                    <th scope="col">Stok</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (App\Models\Costume::SIZES as $size)
-                    @php($stock = $costume->sizes->firstWhere('size', $size))
-                    <tr>
-                        <td>{{ $size }}</td>
-                        <td>{{ $stock?->stock ?? 0 }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </section>
-
-    <section>
-        <h2>Cek Ketersediaan Tanggal</h2>
-
-        @if ($availability)
-            <p role="status">
-                Ukuran {{ $availability['ukuran'] }} untuk {{ $availability['tanggal_mulai'] }} sampai {{ $availability['tanggal_selesai'] }}:
-                @if ($availability['available'] > 0)
-                    tersedia ({{ $availability['available_stock'] }} unit).
-                @else
-                    tidak tersedia.
-                @endif
-            </p>
-        @endif
-
-        <form method="GET" action="{{ route('catalog.availability', $costume) }}">
-            <p>
-                <label for="cek_ukuran">Ukuran</label>
-                <select id="cek_ukuran" name="ukuran" required>
-                    @foreach (App\Models\Costume::SIZES as $size)
-                        <option value="{{ $size }}">{{ $size }}</option>
+            @if ($costume->images->count() > 1)
+                <div class="d-flex gap-3 overflow-auto">
+                    @foreach ($costume->images as $image)
+                        <div class="detail-thumb">
+                            <img src="{{ $image->url() }}" alt="Foto tambahan kostum {{ $costume->character_name }}">
+                        </div>
                     @endforeach
-                </select>
-            </p>
-            <p>
-                <label for="cek_tanggal_mulai">Tanggal mulai</label>
-                <input id="cek_tanggal_mulai" name="tanggal_mulai" type="date" min="{{ now()->toDateString() }}" required>
-            </p>
-            <p>
-                <label for="cek_tanggal_selesai">Tanggal kembali</label>
-                <input id="cek_tanggal_selesai" name="tanggal_selesai" type="date" min="{{ now()->addDay()->toDateString() }}" required>
-            </p>
-            <p><button type="submit">Cek Ketersediaan</button></p>
-        </form>
-    </section>
+                </div>
+            @endif
+        </div>
 
-    <section>
-        <h2>Sewa Kostum Ini</h2>
-        <p>
-            <a href="{{ route('booking.create', $costume) }}">Sewa Sekarang</a>
-        </p>
-        @guest
-            <p>Anda akan diarahkan ke halaman login terlebih dahulu. Setelah login, Anda kembali ke halaman booking kostum ini.</p>
-        @endguest
-    </section>
+        {{-- Info --}}
+        <div class="col-lg-6">
 
-    <section>
-        <h2>Ulasan Customer</h2>
+            <div class="detail-eyebrow mb-2">{{ $costume->category?->name ?? 'Tanpa kategori' }}</div>
+            <h1 class="detail-title mb-3">{{ $costume->character_name }}</h1>
 
-        @if ($reviews->isEmpty())
-            <p>Belum ada ulasan untuk kostum ini.</p>
-        @else
-            <ul>
-                @foreach ($reviews as $review)
-                    <li>
-                        <p><strong>{{ $review->reviewer?->name ?? 'Pengguna' }}</strong> - Rating {{ $review->rating }}/5</p>
-                        <p>{{ $review->comment ?: 'Tanpa komentar.' }}</p>
-                        <p><small>{{ $review->created_at->format('d/m/Y H:i') }}</small></p>
-                    </li>
-                @endforeach
-            </ul>
+            <div class="text-muted-ci mb-4">
+                &#9733; {{ $averageRating > 0 ? number_format($averageRating, 1, ',', '.') : 'Belum ada rating' }}
+                ({{ $reviews->total() }} ulasan)
+                &nbsp;&middot;&nbsp; {{ $costume->city }}
+            </div>
 
-            {{ $reviews->links() }}
-        @endif
-    </section>
-</article>
+            <div class="detail-status mb-4">
+                {{ $costume->is_available ? 'Tersedia untuk disewa' : 'Tidak tersedia' }}
+            </div>
+
+            <div class="d-flex flex-wrap align-items-baseline gap-2 mb-4">
+                <span class="detail-price">{{ rupiah($costume->price_per_day) }}</span>
+                <span class="detail-price-unit">/ hari</span>
+                <span class="detail-deposit">
+                    &middot; Deposit {{ rupiah($costume->deposit > 0 ? $costume->deposit : config('cosplayin.deposit')) }} (dikembalikan)
+                </span>
+            </div>
+
+            <p class="text-muted-ci mb-4" style="max-width: 36rem;">{{ $costume->description }}</p>
+
+            <hr class="sidebar-divider my-4">
+
+            {{-- Kelengkapan --}}
+            <div class="mb-4">
+                <div class="detail-section-title mb-2">Kelengkapan kostum</div>
+                <p class="mb-0" style="white-space: pre-line;">{{ $costume->accessories ?: 'Informasi aksesori belum diisi tenant.' }}</p>
+            </div>
+
+            {{-- Ukuran --}}
+            <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="detail-section-title">Pilih ukuran</div>
+                    <span class="detail-small-note">Panduan ukuran</span>
+                </div>
+
+                <div class="d-flex flex-wrap gap-3">
+                    @foreach (App\Models\Costume::SIZES as $size)
+                        @php($stock = $costume->sizes->firstWhere('size', $size)?->stock ?? 0)
+                        <button type="button"
+                                class="detail-size-btn {{ $loop->index === 1 ? 'active' : '' }}"
+                                @disabled($stock < 1)>
+                            {{ $size }}
+                        </button>
+                    @endforeach
+                </div>
+            </div>
+
+            <form method="GET" action="{{ route('catalog.availability', $costume) }}" class="mb-4">
+                <details>
+                    <summary class="fw-semibold" style="cursor: pointer;">Cek ketersediaan tanggal &rarr;</summary>
+                    <div class="row g-3 mt-1">
+                        <div class="col-md-4">
+                            <label for="cek_ukuran" class="form-label auth-label">Ukuran</label>
+                            <select id="cek_ukuran" name="ukuran" class="form-select auth-input" required>
+                                @foreach (App\Models\Costume::SIZES as $size)
+                                    <option value="{{ $size }}">{{ $size }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="cek_tanggal_mulai" class="form-label auth-label">Tanggal mulai</label>
+                            <input id="cek_tanggal_mulai" name="tanggal_mulai" type="date"
+                                   class="form-control auth-input" min="{{ now()->toDateString() }}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="cek_tanggal_selesai" class="form-label auth-label">Tanggal kembali</label>
+                            <input id="cek_tanggal_selesai" name="tanggal_selesai" type="date"
+                                   class="form-control auth-input" min="{{ now()->addDay()->toDateString() }}" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary rounded-pill mt-3 px-4">Cek Ketersediaan</button>
+                </details>
+            </form>
+
+            @if ($availability)
+                <p role="status" class="mb-4">
+                    Ukuran {{ $availability['ukuran'] }} untuk {{ $availability['tanggal_mulai'] }} sampai {{ $availability['tanggal_selesai'] }}:
+                    @if ($availability['available'] > 0)
+                        tersedia ({{ $availability['available_stock'] }} unit).
+                    @else
+                        tidak tersedia.
+                    @endif
+                </p>
+            @endif
+
+            {{-- CTA sewa --}}
+            <a href="{{ route('booking.create', $costume) }}"
+               class="btn btn-primary w-100 auth-submit d-block text-center mb-2">
+                Sewa sekarang &rarr;
+            </a>
+            <p class="detail-small-note mb-0">Dibersihkan setiap selesai sewa &bull; Foto sesuai produk</p>
+
+            @guest
+                <p class="detail-small-note mt-2 mb-0">Anda akan diarahkan ke halaman login terlebih dahulu.</p>
+            @endguest
+        </div>
+    </div>
+
+    {{-- Tenant --}}
+    <div class="detail-tenant-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mt-5">
+        <div>
+            <div class="fw-semibold mb-1">Disewakan oleh {{ $costume->tenant->store_name }}</div>
+            <div class="text-muted-ci small">Tenant terverifikasi &middot; {{ $costume->tenant->city }}</div>
+        </div>
+        <a href="{{ route('tenants.show', $costume->tenant) }}"
+           class="btn btn-primary rounded-pill px-4">Lihat tenant &rarr;</a>
+    </div>
+
+</div>
 @endsection
