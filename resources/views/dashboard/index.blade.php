@@ -13,12 +13,13 @@
         @if ($activeOrder)
             @php
                 $costume = $activeOrder->costume;
-                $hasImage = $costume?->images->isNotEmpty();
+                $imageUrl = $costume?->primaryImageUrl();
+                $hasImage = $imageUrl && ! str_contains($imageUrl, 'placeholder.svg');
             @endphp
 
             <div class="dashboard-active-order">
                 @if ($hasImage)
-                    <img src="{{ $costume->primaryImageUrl() }}"
+                    <img src="{{ $imageUrl }}"
                          alt="Foto kostum {{ $costume->character_name }}"
                          class="dashboard-active-media">
                 @else
